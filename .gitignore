@@ -3,3 +3,5 @@ node_modules/
 .vercel/
 qa/out/
 *.log
+.vercel
+.env*

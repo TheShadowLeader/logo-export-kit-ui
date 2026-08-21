@@ -94,6 +94,8 @@ p { text-wrap: pretty; }
 :focus-visible { outline: 2px solid var(--sunrise); outline-offset: 2px; box-shadow: 0 0 0 4px var(--ink); }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
+input, select { caret-color: var(--sunrise); } /* browser surfaces carry the palette too: caret, selection, scrollbars, numerals */
+.progress, .slider-row .val, .colorrow .hex, .tree, .tile .cap .nm { font-variant-numeric: tabular-nums; }
 
 /* ── Header ────────────────────────────────────────────────────────────────── */
 header.top { border-bottom: 1px solid var(--line); padding-block: 18px; }
@@ -242,7 +244,7 @@ section > h2 + * { margin-top: 18px; } /* more air above a heading (48px section
 @media (max-width: 980px) { .results { grid-template-columns: 1fr; } }
 .results > * { animation: rise 0.3s var(--ease) both; }
 .results > * + * { animation-delay: 40ms; }
-.tree { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 14px; font-family: var(--mono); font-size: 12px; line-height: 1.85; max-height: 72vh; overflow: auto; position: sticky; top: 20px; }
+.tree { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 14px; font-family: var(--mono); font-size: 12px; line-height: 1.85; max-height: 72vh; overflow: auto; position: sticky; top: 20px; scrollbar-width: thin; scrollbar-color: var(--line-hi) transparent; }
 .tree .dir { color: var(--dir); }
 .tree .file { color: var(--ink-2); cursor: pointer; }
 .tree .meta { color: var(--ink-3); font-size: 10.5px; padding-left: 8px; }

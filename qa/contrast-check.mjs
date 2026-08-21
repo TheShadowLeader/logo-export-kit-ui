@@ -31,16 +31,23 @@ const ratio = (fg, bg) => { const [a, b] = [lum(fg), lum(bg)]; return (Math.max(
 // [foreground, backdrop stack (outermost first), min ratio, where it shows]
 const PAIRS = [
   ["ink", ["bg"], 4.5, "body text"],
-  ["ink-2", ["bg"], 4.5, "tagline / eyebrows / hints"],
-  ["ink-3", ["bg"], 3, "env label / notes / footer (de-emphasised meta)"],
-  ["ink-bright", ["bg", "surface"], 4.5, "h2 / drop title"],
-  ["ink-2", ["bg", "surface"], 4.5, "chip names / labels / tree files"],
-  ["ink-3", ["bg", "surface"], 3, "tree meta / tile labels"],
-  ["ink", ["bg", "surface", "field"], 4.5, "input + select text"],
+  ["ink-2", ["bg"], 4.5, "tagline / eyebrows"],
+  ["ink-3", ["bg"], 3, "env label / notes (de-emphasised meta)"],
+  ["ink-bright", ["bg", "surface"], 4.5, "headings on panels"],
+  ["ink-2", ["bg", "surface"], 4.5, "labels / chip names / tree files on panels"],
+  ["ink-3", ["bg", "surface"], 3, "tree meta / tile labels on panels"],
+  ["ink", ["bg", "surface", "field"], 4.5, "input + select text on the tinted field"],
+  ["ink-3", ["bg", "surface", "field"], 3, "placeholder on the tinted field"],
+  ["well-ink", ["bg", "well"], 4.5, "drop-zone title on the dark well"],
+  ["well-ink-2", ["bg", "well"], 4.5, "drop-zone hint on the dark well"],
+  ["well-ink-3", ["bg", "well"], 3, "drop-zone filename examples"],
+  ["moonmist", ["island"], 4.5, "island text"],
   ["dir", ["bg", "surface"], 4.5, "tree folder names (12px)"],
   ["warn", ["bg", "warn-bg"], 4.5, "warnbox text"],
-  ["midnight", ["sunrise"], 3, "button text on sunrise (site spec — UI component threshold)"],
-  ["ink", ["bg", "sunrise-soft"], 4.5, "drop zone text while hovering"],
+  ["midnight", ["sunrise"], 3, "primary HoverButton label on sunrise (site spec — UI component threshold)"],
+  ["ink-bright", ["bg"], 4.5, "ghost HoverButton label at rest"],
+  ["hb-over", ["bg", "hb-dot"], 3, "ghost HoverButton overlay label on the flood (UI component)"],
+  ["ink", ["bg", "sunrise-soft"], 4.5, "toggle chip text when selected"],
 ];
 
 let fail = 0;

@@ -15,6 +15,8 @@ import {
 import { makeZip, produceAll, type Produced } from "@/lib/render";
 import Logo from "@/components/Logo";
 import ThemeSwitch from "@/components/ThemeSwitch";
+import HoverButton from "@/components/HoverButton";
+import Island from "@/components/Island";
 
 type Row = Detected & { id: number };
 
@@ -130,7 +132,7 @@ export default function Page() {
         {/* ── 1 · Upload ── */}
         <section>
           <p className="eyebrow">01 · Logos</p>
-          <h2>The masters</h2>
+          <h2>The masters<span className="dot">.</span></h2>
           <div
             className={`drop${dragOn ? " on" : ""}`}
             onClick={() => fileInput.current?.click()}
@@ -195,7 +197,7 @@ export default function Page() {
         {/* ── 2 · Options ── */}
         <section>
           <p className="eyebrow">02 · Options</p>
-          <h2>Client, colours, margins</h2>
+          <h2>Client, colours, margins<span className="dot">.</span></h2>
           <div className="options">
             <div className="opt">
               <label>Client name</label>
@@ -261,13 +263,13 @@ export default function Page() {
         {/* ── 3 · Generate ── */}
         <section>
           <div className="genrow">
-            <button className="btn primary" disabled={!canGenerate} aria-busy={busy} onClick={() => void generate()} data-testid="generate">
+            <HoverButton tone="primary" disabled={!canGenerate} busy={busy} onClick={() => void generate()} testid="generate">
               {busy ? "Rendering…" : "Generate the package"}
-            </button>
+            </HoverButton>
             {zipUrl && (
-              <a className="btn ghost" href={zipUrl} download={`${rootName}.zip`} data-testid="download-zip">
+              <HoverButton tone="ghost" href={zipUrl} download={`${rootName}.zip`} testid="download-zip">
                 {"Download "}{rootName}{".zip"}
-              </a>
+              </HoverButton>
             )}
             {progress && (
               <span className="progress">
@@ -289,22 +291,31 @@ export default function Page() {
 
         {/* ── 4 · Structure + previews ── */}
         {produced.length > 0 && (
-          <section className="results" data-testid="results">
-            <Tree files={produced} root={rootName} />
-            <Grid files={produced} root={rootName} />
+          <section data-testid="results">
+            <p className="eyebrow">03 · Package</p>
+            <h2>{produced.length}{" files, named and filed"}<span className="dot">.</span></h2>
+            <div className="results">
+              <Tree files={produced} root={rootName} />
+              <Grid files={produced} root={rootName} />
+            </div>
           </section>
         )}
       </main>
 
+      <Island files={produced.length} zipName={`${rootName}.zip`} zipUrl={zipUrl} />
+
       <footer className="foot">
         <div className="wrap">
-          <span>
-            {"© "}{new Date().getFullYear()}{" "}
-            <a href="https://theshadowlegacy.com" target="_blank" rel="noopener noreferrer">The Shadow Legacy</a>
-            {" — one engine, two front-ends. The CLI skill and this tool share every convention."}
-          </span>
-          <span className="spacer" />
-          <code>hosted CMYK is profile-less · the CLI applies ICC locally</code>
+          <div className="foot-top">
+            <span className="brand">The Shadow Legacy<span className="dot">.</span></span>
+            <span className="note">One engine, two front-ends — the CLI kit and this tool share every convention.</span>
+          </div>
+          <div className="foot-bottom">
+            <span>{"© "}{new Date().getFullYear()}{" The Shadow Legacy"}</span>
+            <span className="spacer" />
+            <span>Hosted CMYK is profile-less · the CLI applies ICC locally</span>
+            <a href="https://theshadowlegacy.com" target="_blank" rel="noopener noreferrer">theshadowlegacy.com</a>
+          </div>
         </div>
       </footer>
     </>

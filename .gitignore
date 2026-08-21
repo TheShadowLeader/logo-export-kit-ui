@@ -5,3 +5,8 @@ qa/out/
 *.log
 .vercel
 .env*
+
+# build artefacts + internal working notes (kept locally, not published)
+tsconfig.tsbuildinfo
+/RESEARCH.md
+/SPEC.md

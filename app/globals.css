@@ -76,10 +76,10 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); font-
 
 /* Header */
 header.top { border-bottom: 1px solid var(--line); padding-block: 20px; }
-header.top .wrap { display: flex; align-items: center; gap: 18px; }
+header.top .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; row-gap: 12px; } /* narrow screens: the theme pill drops to its own row instead of squeezing the tool name */
 .brandlink { display: flex; align-items: center; color: var(--ink); text-decoration: none; }
 .brandlink svg { height: 34px; width: auto; display: block; }
-.toolname { font-family: var(--display); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; font-size: 13px; color: var(--ink); padding-left: 18px; border-left: 1px solid var(--line); }
+.toolname { font-family: var(--display); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; font-size: 13px; color: var(--ink); padding-left: 18px; border-left: 1px solid var(--line); white-space: nowrap; }
 .tagline { color: var(--ink-2); font-style: italic; font-size: 15px; }
 .top .spacer { flex: 1; }
 .top .env { font-family: var(--display); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
@@ -89,7 +89,7 @@ header.top .wrap { display: flex; align-items: center; gap: 18px; }
 /* Theme switch — light · dark · system (components/ThemeSwitch.tsx). The site's
    outline-control language: 2px ring (midnight/55 light, sunrise dark), active segment
    filled sunrise with midnight ink, hover turns the glyph sunrise. */
-.theme { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 2px solid var(--ring); border-radius: 999px; transition: border-color 0.2s var(--ease); }
+.theme { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 2px solid var(--ring); border-radius: 999px; transition: border-color 0.2s var(--ease); margin-left: auto; }
 .theme:hover { border-color: var(--sunrise); }
 .theme button { display: grid; place-items: center; width: 30px; height: 24px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; transition: background 0.2s var(--ease), color 0.2s var(--ease); }
 .theme button:hover { color: var(--sunrise); }

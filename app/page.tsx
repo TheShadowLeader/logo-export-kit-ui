@@ -131,7 +131,6 @@ export default function Page() {
         <section>
           <p className="eyebrow">01 · Logos</p>
           <h2>The masters</h2>
-          <div style={{ height: 14 }} />
           <div
             className={`drop${dragOn ? " on" : ""}`}
             onClick={() => fileInput.current?.click()}
@@ -140,6 +139,9 @@ export default function Page() {
             onDrop={(e) => { e.preventDefault(); setDragOn(false); void addFiles(e.dataTransfer.files); }}
             data-testid="dropzone"
           >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m17 8-5-5-5 5" /><path d="M12 3v12" />
+            </svg>
             <b>Drop 1–7 SVG masters here</b>
             <p className="hint">
               {"or click to browse — orientation + negative auto-detected from filenames: "}
@@ -153,22 +155,24 @@ export default function Page() {
 
           {rows.length > 0 && (
             <>
-              <div style={{ height: 14 }} />
               <div className="chips">
                 {rows.map((r) => (
                   <div key={r.id} className={`chip${r.orientation ? "" : " undetected"}`}>
                     <span className="fname" title={r.name}>{r.name}</span>
-                    <select
-                      value={r.orientation ?? ""}
-                      onChange={(e) =>
-                        setRows((rs) => rs.map((x) => x.id === r.id
-                          ? { ...x, orientation: (e.target.value || null) as Orientation | null }
-                          : x))
-                      }
-                    >
-                      <option value="">— orientation —</option>
-                      {ORI.map((o) => <option key={o} value={o}>{o}</option>)}
-                    </select>
+                    <span className="sel">
+                      <select
+                        aria-label={`Orientation of ${r.name}`}
+                        value={r.orientation ?? ""}
+                        onChange={(e) =>
+                          setRows((rs) => rs.map((x) => x.id === r.id
+                            ? { ...x, orientation: (e.target.value || null) as Orientation | null }
+                            : x))
+                        }
+                      >
+                        <option value="">— orientation —</option>
+                        {ORI.map((o) => <option key={o} value={o}>{o}</option>)}
+                      </select>
+                    </span>
                     {r.orientation !== "mark" && (
                       <label className="neg">
                         <input
@@ -178,7 +182,9 @@ export default function Page() {
                         {"negative"}
                       </label>
                     )}
-                    <span className="x" onClick={() => setRows((rs) => rs.filter((x) => x.id !== r.id))}>✕</span>
+                    <button type="button" className="x" aria-label={`Remove ${r.name}`} onClick={() => setRows((rs) => rs.filter((x) => x.id !== r.id))}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><path d="M18 6 6 18M6 6l12 12" /></svg>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -190,12 +196,11 @@ export default function Page() {
         <section>
           <p className="eyebrow">02 · Options</p>
           <h2>Client, colours, margins</h2>
-          <div style={{ height: 14 }} />
           <div className="options">
             <div className="opt">
               <label>Client name</label>
               <input
-                type="text" placeholder="Client name — drives every folder and filename" value={client}
+                type="text" placeholder="Drives every folder + filename" value={client}
                 onChange={(e) => setClient(e.target.value)} data-testid="client-name"
               />
             </div>
@@ -224,7 +229,6 @@ export default function Page() {
                 />
                 <span className="val">{Math.round(safeZone * 100)}%</span>
               </div>
-              <div style={{ height: 8 }} />
               <div className="szprev">
                 <div className="disc" style={{ background: pbg }}>
                   {markSvg && (
@@ -235,8 +239,8 @@ export default function Page() {
                 <span className="note">circular-crop preview — logo scaled inside the canvas so profile circles never clip it</span>
               </div>
             </div>
-            <div className="opt">
-              <label>Outputs</label>
+            <div className="opt outputs">
+              <span className="lbl">Outputs</span>
               <div className="togglerow">
                 {(
                   [["bw", "B&W versions"], ["social", "Social profiles"], ["favicon", "Favicon"], ["print", "Print"], ["cmyk", "CMYK (print)"]] as const
@@ -257,7 +261,7 @@ export default function Page() {
         {/* ── 3 · Generate ── */}
         <section>
           <div className="genrow">
-            <button className="btn" disabled={!canGenerate} onClick={() => void generate()} data-testid="generate">
+            <button className="btn primary" disabled={!canGenerate} aria-busy={busy} onClick={() => void generate()} data-testid="generate">
               {busy ? "Rendering…" : "Generate the package"}
             </button>
             {zipUrl && (
@@ -277,12 +281,9 @@ export default function Page() {
             )}
           </div>
           {warnings.length > 0 && (
-            <>
-              <div style={{ height: 12 }} />
-              <div className="warnbox">
-                {warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
-              </div>
-            </>
+            <div className="warnbox" role="status">
+              {warnings.map((w, i) => <div key={i}>{w}</div>)}
+            </div>
           )}
         </section>
 
@@ -355,7 +356,7 @@ function Tree({ files, root }: { files: Produced[]; root: string }) {
     <div className="tree" data-testid="tree">
       <span className="dir">▾ {root}/</span>
       <Render node={tree.dirs.get(root) ?? tree} />
-      <div style={{ marginTop: 10, color: "var(--ink-3)" }}>
+      <div className="total">
         {files.length}{" files · "}{fmt(total)}
       </div>
     </div>

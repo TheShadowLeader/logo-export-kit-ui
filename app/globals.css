@@ -1,8 +1,9 @@
 /* Logo Export Kit UI — The Shadow Legacy brand.
    Tokens + type + component rules mirror shadow-legacy-site/DESIGN.md + globals.css:
    moonmist/midnight pair · sunrise = the sole accent (large text/UI only — 3.66:1 on
-   midnight, 2.5:1 on moonmist, never small text) · hairline `line` · radius 4px ·
-   Jost-for-Futura display · Georgia body · ease cubic-bezier(.22,1,.36,1).
+   midnight, 2.5:1 on moonmist, never small text) · hairline `line` · 4px surfaces, PILL
+   controls (the site's BEGIN/nav/toggle language) · Jost-for-Futura display · Georgia
+   body · ease cubic-bezier(.22,1,.36,1).
 
    THEMES — same mechanics as the site: the CSS reads ONE switch, `.dark` on <html>,
    written before first paint by the boot script in layout.tsx and afterwards by
@@ -10,7 +11,12 @@
    prefers-color-scheme). Light is the base, `.dark` swaps the ROLE tokens. Brand
    LITERALS (--midnight/--moonmist/--sunrise) never swap — button text, emblem and
    selection use them in both themes. Any NEW rule must use the role tokens; a literal
-   hex would not follow the theme. qa/contrast-check.mjs asserts the text pairs. */
+   hex would not follow the theme. qa/contrast-check.mjs asserts the text pairs.
+
+   MOTION (site doctrine + Emil's framework): press feedback 160ms scale(.97) on every
+   pressable; hovers 200ms `ease`, gated to fine pointers; one authored reveal when a
+   package lands (rise 8px, 300ms, 40ms stagger); theme wipe owned by ThemeSwitch;
+   reduced-motion = static. Transitions name their properties — never `all`. */
 :root {
   /* brand literals — identical in both themes */
   --midnight: #003840;
@@ -21,7 +27,8 @@
   --sunrise: #e2604a;
   --sunrise-soft: rgba(226, 96, 74, 0.14);
   --radius: 4px;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --pill: 999px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1); /* strong ease-out — site's curve */
   --display: var(--font-jost), "Futura PT", Futura, "Century Gothic", sans-serif;
   --body: Georgia, "Times New Roman", serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
@@ -66,36 +73,53 @@
   --err: var(--sunrise);
   --check: rgba(224, 219, 198, 0.06);
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { color-scheme: light; }
 html.dark { color-scheme: dark; }
-body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.65; }
-.wrap { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
+body {
+  min-height: 100svh; display: flex; flex-direction: column; /* footer sits at the bottom of the viewport, not under the CTA */
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* padding-INLINE only: a shorthand here would outrank main's padding-block (it did — that was the "glued" spacing) */
+.wrap { width: 100%; max-width: 1280px; margin-inline: auto; padding-inline: 28px; }
 .fill-sunrise { fill: var(--sunrise); }
 ::selection { background: var(--sunrise); color: var(--midnight); }
+h2 { text-wrap: balance; }
+p { text-wrap: pretty; }
 
-/* Header */
-header.top { border-bottom: 1px solid var(--line); padding-block: 20px; }
-header.top .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; row-gap: 12px; } /* narrow screens: the theme pill drops to its own row instead of squeezing the tool name */
-.brandlink { display: flex; align-items: center; color: var(--ink); text-decoration: none; }
+/* Two-tone focus ring (site r10): sunrise outline over a 4px ink backing, so the
+   indicator reads on beige (sunrise alone is 2.5:1) and on sunrise-filled controls. */
+:focus-visible { outline: 2px solid var(--sunrise); outline-offset: 2px; box-shadow: 0 0 0 4px var(--ink); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+header.top { border-bottom: 1px solid var(--line); padding-block: 18px; }
+header.top .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; row-gap: 12px; } /* narrow screens: the theme pill drops to its own row */
+.brandlink { display: flex; align-items: center; color: var(--ink); text-decoration: none; border-radius: var(--radius); }
 .brandlink svg { height: 34px; width: auto; display: block; }
 .toolname { font-family: var(--display); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; font-size: 13px; color: var(--ink); padding-left: 18px; border-left: 1px solid var(--line); white-space: nowrap; }
 .tagline { color: var(--ink-2); font-style: italic; font-size: 15px; }
 .top .spacer { flex: 1; }
-.top .env { font-family: var(--display); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+.top .env { font-family: var(--display); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
 @media (max-width: 980px) { .tagline { display: none; } }
 @media (max-width: 640px) { .top .env { display: none; } }
 
 /* Theme switch — light · dark · system (components/ThemeSwitch.tsx). The site's
    outline-control language: 2px ring (midnight/55 light, sunrise dark), active segment
    filled sunrise with midnight ink, hover turns the glyph sunrise. */
-.theme { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 2px solid var(--ring); border-radius: 999px; transition: border-color 0.2s var(--ease); margin-left: auto; }
-.theme:hover { border-color: var(--sunrise); }
-.theme button { display: grid; place-items: center; width: 30px; height: 24px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; transition: background 0.2s var(--ease), color 0.2s var(--ease); }
-.theme button:hover { color: var(--sunrise); }
-.theme button:focus-visible { outline: 2px solid var(--sunrise); outline-offset: 2px; }
+.theme { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 2px solid var(--ring); border-radius: var(--pill); transition: border-color 0.2s ease; margin-left: auto; }
+.theme button { display: grid; place-items: center; width: 30px; height: 24px; border: 0; border-radius: var(--pill); background: transparent; color: var(--ink); transition: background 0.2s ease, color 0.2s ease, transform 160ms var(--ease); }
+.theme button:active { transform: scale(0.94); }
 .theme button[aria-pressed="true"] { background: var(--sunrise); color: var(--midnight); }
 .theme svg { display: block; }
+@media (hover: hover) and (pointer: fine) {
+  .theme:hover { border-color: var(--sunrise); }
+  .theme button:hover { color: var(--sunrise); }
+  .theme button[aria-pressed="true"]:hover { color: var(--midnight); }
+}
 
 /* Theme change = circular wipe from the pressed segment (the site's view-transition
    recipe). The default cross-fade of both snapshots muddies the wipe — only the new
@@ -104,81 +128,130 @@ header.top .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wra
 ::view-transition-old(root) { z-index: 1; }
 ::view-transition-new(root) { z-index: 2; }
 
-main { padding-block: 40px 90px; display: grid; gap: 30px; }
-
+/* ── Page rhythm ───────────────────────────────────────────────────────────── */
+main { flex: 1; padding-block: 56px 96px; display: grid; gap: 48px; align-content: start; }
+main > section { min-width: 0; } /* grid tracks never grow past the container for long content */
+section > .eyebrow { font-family: var(--display); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); }
+section > h2 { font-family: var(--display); font-weight: 600; font-size: 24px; letter-spacing: -0.005em; line-height: 1.15; margin-top: 6px; color: var(--ink-bright); }
+section > h2 + * { margin-top: 18px; } /* more air above a heading (48px section gap) than below it */
 .eyebrow { font-family: var(--display); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); }
-h2 { font-family: var(--display); font-weight: 600; font-size: 22px; letter-spacing: 0.01em; line-height: 1.2; margin-top: 6px; color: var(--ink-bright); }
 
-/* Drop zone */
+/* ── Drop zone ─────────────────────────────────────────────────────────────── */
 .drop {
+  display: grid; justify-items: center; gap: 8px;
   border: 1px dashed var(--line-hi); border-radius: var(--radius); background: var(--surface);
-  padding: 48px 24px; text-align: center; cursor: pointer; transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
+  padding: 52px 24px 48px; text-align: center; cursor: pointer; color: var(--ink-2);
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
-.drop.on, .drop:hover { border-color: var(--sunrise); background: var(--sunrise-soft); }
-.drop b { font-family: var(--display); font-weight: 600; letter-spacing: 0.06em; font-size: 17px; color: var(--ink-bright); }
-.drop .hint { color: var(--ink-2); margin-top: 8px; font-size: 15px; }
-.drop .hint code { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+.drop svg { width: 22px; height: 22px; margin-bottom: 6px; color: var(--ink-3); transition: color 0.2s ease, transform 0.3s var(--ease); }
+.drop b { font-family: var(--display); font-weight: 600; letter-spacing: 0.04em; font-size: 18px; color: var(--ink-bright); }
+.drop .hint { max-width: 64ch; font-size: 15px; }
+.drop .hint code { display: block; margin-top: 6px; font-family: var(--mono); font-size: 12px; color: var(--ink-3); } /* the filename examples sit on their own line */
+.drop.on { border-color: var(--sunrise); background: var(--sunrise-soft); }
+.drop.on svg { color: var(--sunrise); transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) {
+  .drop:hover { border-color: var(--sunrise); background: var(--sunrise-soft); }
+  .drop:hover svg { color: var(--sunrise); transform: translateY(-2px); }
+}
 
-/* File chips */
-.chips { display: flex; flex-wrap: wrap; gap: 10px; }
-.chip { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 9px 12px; }
-.chip .fname { font-family: var(--mono); font-size: 12px; color: var(--ink-2); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip select { background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 6px; font-size: 12px; font-family: var(--mono); }
-.chip .neg { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-2); font-family: var(--display); letter-spacing: 0.04em; }
-.chip .x { color: var(--ink-3); cursor: pointer; padding: 2px 4px; }
-.chip .x:hover { color: var(--sunrise); }
+/* ── File chips (pills) ────────────────────────────────────────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.chip { display: inline-flex; align-items: center; gap: 10px; height: 38px; max-width: 100%; padding: 0 6px 0 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--pill); transition: border-color 0.2s ease; }
+.chip .fname { font-family: var(--mono); font-size: 12px; color: var(--ink-2); max-width: 220px; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } /* shrinks with ellipsis so a long name never widens the page */
+.chip .sel { position: relative; display: inline-flex; }
+.chip select { appearance: none; -webkit-appearance: none; height: 26px; background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: var(--pill); padding: 0 26px 0 12px; font-size: 12px; font-family: var(--mono); line-height: 1; transition: border-color 0.2s ease; }
+.chip .sel::after { content: ""; position: absolute; right: 11px; top: 50%; width: 6px; height: 6px; border-right: 1.5px solid var(--ink-2); border-bottom: 1.5px solid var(--ink-2); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.chip .neg { position: relative; display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 12px 0 10px; border: 1px solid var(--line-hi); border-radius: var(--pill); font-size: 12px; color: var(--ink-2); font-family: var(--display); letter-spacing: 0.04em; cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease; }
+.chip .neg::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line-hi); transition: background 0.2s ease; }
+.chip .neg input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; } /* the real checkbox stays the click + keyboard target */
+.chip .neg:has(input:checked) { border-color: var(--sunrise); background: var(--sunrise-soft); color: var(--ink-bright); }
+.chip .neg:has(input:checked)::before { background: var(--sunrise); }
+.chip .neg:has(input:focus-visible) { outline: 2px solid var(--sunrise); outline-offset: 2px; box-shadow: 0 0 0 4px var(--ink); }
+.chip .x { display: grid; place-items: center; width: 26px; height: 26px; border: 0; border-radius: var(--pill); background: transparent; color: var(--ink-3); transition: color 0.2s ease, background 0.2s ease, transform 160ms var(--ease); }
+.chip .x svg { width: 12px; height: 12px; }
+.chip .x:active { transform: scale(0.9); }
 .chip.undetected { border-color: var(--warn); }
+@media (hover: hover) and (pointer: fine) {
+  .chip select:hover { border-color: var(--line-hi); }
+  .chip .neg:hover { border-color: var(--sunrise); color: var(--ink-bright); }
+  .chip .x:hover { color: var(--sunrise); background: var(--sunrise-soft); }
+}
 
-/* Options */
-.options { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
-.opt label { display: block; font-family: var(--display); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
-.opt input[type="text"] { width: 100%; background: var(--field); border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); padding: 10px 12px; font-size: 15px; font-family: var(--body); }
-.opt input[type="text"]:focus { outline: 2px solid var(--sunrise); outline-offset: 2px; border-color: var(--sunrise); }
-.colorrow { display: flex; align-items: center; gap: 10px; }
-.colorrow input[type="color"] { width: 42px; height: 30px; border: 1px solid var(--line); border-radius: var(--radius); background: none; padding: 2px; cursor: pointer; }
-.colorrow .hex { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
-.opt .src { font-size: 12px; color: var(--ink-3); font-style: italic; margin-top: 4px; }
-.slider-row { display: flex; align-items: center; gap: 12px; }
+/* ── Options ───────────────────────────────────────────────────────────────── */
+.options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 28px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 28px 28px; }
+@media (max-width: 1040px) { .options { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .options { grid-template-columns: 1fr; padding: 22px 20px; } }
+.opt.outputs { grid-column: 1 / -1; padding-top: 22px; border-top: 1px solid var(--line); } /* one full-width row */
+.opt > label, .opt > .lbl { display: block; font-family: var(--display); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 10px; }
+.opt input[type="text"] { width: 100%; height: 40px; background: var(--field); border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); padding: 0 12px; font-size: 15px; font-family: var(--body); transition: border-color 0.2s ease; }
+.opt input[type="text"]::placeholder { color: var(--ink-3); }
+.opt input[type="text"]:focus-visible { border-color: var(--sunrise); }
+.colorrow { display: flex; align-items: center; gap: 12px; height: 40px; }
+.colorrow input[type="color"] { width: 44px; height: 32px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--field); padding: 3px; cursor: pointer; transition: border-color 0.2s ease; }
+.colorrow input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.colorrow input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 2px; }
+.colorrow .hex { font-family: var(--mono); font-size: 12px; color: var(--ink-2); letter-spacing: 0.02em; }
+.opt .src { font-size: 12px; color: var(--ink-3); font-style: italic; margin-top: 8px; }
+.slider-row { display: flex; align-items: center; gap: 12px; height: 40px; }
 .slider-row input[type="range"] { flex: 1; accent-color: var(--sunrise); }
-.slider-row .val { font-family: var(--mono); font-size: 12px; color: var(--ink-2); width: 44px; }
-.togglerow { display: flex; flex-wrap: wrap; gap: 12px 18px; }
-.togglerow label { display: flex; align-items: center; gap: 7px; font-size: 14px; color: var(--ink); text-transform: none; letter-spacing: 0; font-family: var(--body); margin: 0; cursor: pointer; }
-.togglerow input { accent-color: var(--sunrise); }
-
-/* Safe-zone preview */
-.szprev { display: flex; align-items: center; gap: 12px; }
-.szprev .disc { position: relative; width: 74px; height: 74px; border-radius: 50%; overflow: hidden; border: 1px solid var(--line-hi); background: #000; flex: none; }
+.slider-row .val { font-family: var(--mono); font-size: 12px; color: var(--ink-2); width: 40px; text-align: right; }
+.szprev { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.szprev .disc { position: relative; width: 56px; height: 56px; border-radius: 50%; overflow: hidden; border: 1px solid var(--line-hi); background: #000; flex: none; }
 .szprev .disc img { position: absolute; inset: 0; margin: auto; }
-.szprev .note { font-size: 13px; color: var(--ink-3); font-style: italic; }
+.szprev .note { font-size: 12.5px; line-height: 1.45; color: var(--ink-3); font-style: italic; }
+@media (hover: hover) and (pointer: fine) {
+  .opt input[type="text"]:hover, .colorrow input[type="color"]:hover { border-color: var(--line-hi); }
+}
 
-/* Generate — buttons per site spec: sunrise bg, midnight text (both themes), radius 4 */
+/* Output toggles — one row of pill chips; the checkbox underneath is the real control */
+.togglerow { display: flex; flex-wrap: wrap; gap: 10px; }
+.togglerow label { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 16px 0 13px; border: 1px solid var(--line-hi); border-radius: var(--pill); font-family: var(--display); font-size: 13px; letter-spacing: 0.03em; color: var(--ink-2); cursor: pointer; user-select: none; transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 160ms var(--ease); }
+.togglerow label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line-hi); transition: background 0.2s ease; }
+.togglerow label:active { transform: scale(0.97); }
+.togglerow input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.togglerow label:has(input:checked) { border-color: var(--sunrise); background: var(--sunrise-soft); color: var(--ink-bright); }
+.togglerow label:has(input:checked)::before { background: var(--sunrise); }
+.togglerow label:has(input:focus-visible) { outline: 2px solid var(--sunrise); outline-offset: 2px; box-shadow: 0 0 0 4px var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .togglerow label:hover { border-color: var(--sunrise); color: var(--ink-bright); }
+}
+
+/* ── Generate ──────────────────────────────────────────────────────────────── */
 .genrow { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .btn {
-  font-family: var(--display); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; font-size: 13px;
-  background: var(--sunrise); color: var(--midnight); border: 0; border-radius: var(--radius); padding: 14px 28px; cursor: pointer;
-  text-decoration: none; transition: filter 0.3s var(--ease);
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 48px; padding: 0 28px;
+  font-family: var(--display); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; font-size: 13px; line-height: 1;
+  background: var(--sunrise); color: var(--midnight); border: 0; border-radius: var(--pill); cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: transform 160ms var(--ease), filter 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
-.btn:hover { filter: brightness(1.08); }
-.btn:focus-visible { outline: 2px solid var(--sunrise); outline-offset: 2px; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+.btn.primary::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; } /* the site's BEGIN-pill dot */
+.btn[aria-busy="true"]::before { animation: pulse 1s ease-in-out infinite; }
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-hi); }
-.btn.ghost:hover { border-color: var(--sunrise); color: var(--ink-bright); filter: none; }
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled) { filter: brightness(1.06); }
+  .btn.ghost:hover { border-color: var(--sunrise); color: var(--ink-bright); filter: none; }
+}
 .progress { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
-.warnbox { border: 1px solid var(--warn-line); background: var(--warn-bg); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; color: var(--warn); }
+.warnbox { margin-top: 14px; border: 1px solid var(--warn-line); background: var(--warn-bg); border-radius: var(--radius); padding: 12px 16px; font-size: 14px; color: var(--warn); }
 .warnbox div { padding-block: 1px; }
 
-/* Results: tree + grid */
-.results { display: grid; grid-template-columns: 380px 1fr; gap: 22px; align-items: start; }
+/* ── Results: tree + grid ──────────────────────────────────────────────────── */
+.results { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 24px; align-items: start; }
 @media (max-width: 980px) { .results { grid-template-columns: 1fr; } }
+.results > * { animation: rise 0.3s var(--ease) both; }
+.results > * + * { animation-delay: 40ms; }
 .tree { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 14px; font-family: var(--mono); font-size: 12px; line-height: 1.85; max-height: 72vh; overflow: auto; position: sticky; top: 20px; }
 .tree .dir { color: var(--dir); }
 .tree .file { color: var(--ink-2); cursor: pointer; }
-.tree .file:hover { color: var(--ink-bright); }
 .tree .meta { color: var(--ink-3); font-size: 10.5px; padding-left: 8px; }
 .tree .indent { padding-left: 18px; border-left: 1px solid var(--line); margin-left: 5px; }
+.tree .total { margin-top: 10px; color: var(--ink-3); }
+@media (hover: hover) and (pointer: fine) { .tree .file:hover { color: var(--ink-bright); } }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
-.gsec { grid-column: 1 / -1; margin-top: 10px; }
+.gsec { grid-column: 1 / -1; margin-top: 12px; }
 .gsec:first-child { margin-top: 0; }
 .tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .tile .im {
@@ -193,12 +266,24 @@ h2 { font-family: var(--display); font-weight: 600; font-size: 22px; letter-spac
 .tile .cap .nm { font-family: var(--mono); font-size: 10.5px; color: var(--ink-2); word-break: break-all; }
 .tile .cap .lb { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
 .tile .cap a { color: var(--ink); font-size: 11px; text-decoration: underline; text-underline-offset: 2px; }
-.tile .cap a:hover { color: var(--ink-bright); }
 .tile.doc .im { font-family: var(--display); font-size: 11px; color: var(--ink-3); letter-spacing: 0.16em; }
+@media (hover: hover) and (pointer: fine) { .tile .cap a:hover { color: var(--ink-bright); } }
 
-footer.foot { border-top: 1px solid var(--line); padding-block: 22px; color: var(--ink-3); font-size: 13px; }
-footer.foot .wrap { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+footer.foot { border-top: 1px solid var(--line); padding-block: 24px; color: var(--ink-3); font-size: 13px; }
+footer.foot .wrap { display: flex; gap: 8px 16px; align-items: baseline; flex-wrap: wrap; }
 footer.foot .spacer { flex: 1; }
-footer.foot a { color: var(--ink-2); text-decoration: none; }
-footer.foot a:hover { color: var(--ink-bright); }
+footer.foot a { color: var(--ink-2); text-decoration: none; transition: color 0.2s ease; }
 footer.foot code { font-family: var(--mono); font-size: 11px; }
+@media (hover: hover) and (pointer: fine) { footer.foot a:hover { color: var(--ink-bright); } }
+
+/* ── Motion ────────────────────────────────────────────────────────────────── */
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) {
+  .results > * { animation: none; }
+  .btn[aria-busy="true"]::before { animation: none; opacity: 0.6; }
+  .drop svg, .drop.on svg { transform: none; }
+  .btn, .theme button, .togglerow label, .chip .x { transition-property: filter, color, background, border-color, opacity; } /* keep the state changes, drop the motion */
+  .btn:active:not(:disabled), .theme button:active, .togglerow label:active, .chip .x:active { transform: none; }
+}

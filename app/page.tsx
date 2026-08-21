@@ -14,6 +14,7 @@ import {
 } from "@/lib/engine";
 import { makeZip, produceAll, type Produced } from "@/lib/render";
 import Logo from "@/components/Logo";
+import ThemeSwitch from "@/components/ThemeSwitch";
 
 type Row = Detected & { id: number };
 
@@ -121,6 +122,7 @@ export default function Page() {
           <span className="tagline">Drop the masters. Leave with the whole package.</span>
           <span className="spacer" />
           <span className="env">Internal · The Shadow Legacy</span>
+          <ThemeSwitch />
         </div>
       </header>
 
@@ -353,7 +355,7 @@ function Tree({ files, root }: { files: Produced[]; root: string }) {
     <div className="tree" data-testid="tree">
       <span className="dir">▾ {root}/</span>
       <Render node={tree.dirs.get(root) ?? tree} />
-      <div style={{ marginTop: 10, color: "var(--dim)" }}>
+      <div style={{ marginTop: 10, color: "var(--ink-3)" }}>
         {files.length}{" files · "}{fmt(total)}
       </div>
     </div>

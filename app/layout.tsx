@@ -16,7 +16,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={jost.variable}>
+    <html lang="en" className={jost.variable} suppressHydrationWarning>
+      <head>
+        {/*
+          Theme boot — runs before first paint so neither theme flashes.
+          'tsl-theme' = light | dark | system (unset = system → follows
+          prefers-color-scheme). Same one-class switch the Shadow Legacy site
+          uses; components/ThemeSwitch.tsx owns it after hydration.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('tsl-theme'),d=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d)}catch(e){}",
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

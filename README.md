@@ -1,6 +1,6 @@
 # Logo Export Kit — UI
 
-**Live:** https://logo-export-kit-ui.vercel.app · internal Shadow Legacy tool
+**Live:** https://logoexport.theshadowlegacy.com (alias https://logo-export-kit-ui.vercel.app) · internal Shadow Legacy tool
 
 Drop 1–7 SVG logo masters → set client name, brand colors, safe zone → get the
 complete client-ready package: social profiles (brand-color backgrounds,

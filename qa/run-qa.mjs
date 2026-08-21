@@ -1,5 +1,6 @@
 // QA gate: upload fixture SVGs → generate → assert tree, file count, zip
-// contents, previews. Run against a server on :4490 (`npm start` after build).
+// contents, previews, then the light/dark/system theme contract (boot script,
+// persistence, OS-follow) with a screenshot per theme. Run against a server on :4490 (`npm start` after build).
 // Local runs have no api/cmyk.py (Vercel-only) — pass CMYK=0 to skip the CMYK
 // toggle and require zero warnings; on the deployed URL run with BASE + CMYK=1.
 import { chromium } from "playwright";
@@ -85,8 +86,37 @@ for (const e of expect) if (!names.includes(e)) throw new Error(`zip missing ${e
 const png = zip["QA_Client_Logos/Social/Instagram/Positive/Instagram_Profile_320x320.png"];
 if (!(png[0] === 0x89 && png[1] === 0x50)) throw new Error("social PNG magic wrong");
 
-await page.screenshot({ path: path.join(OUT, "qa-ui.png"), fullPage: true });
+// themes: light · dark · system — the boot script + ThemeSwitch contract
+const isDark = () => page.evaluate(() => document.documentElement.classList.contains("dark"));
+const stored = () => page.evaluate(() => localStorage.getItem("tsl-theme"));
+const settle = () => page.waitForTimeout(1100);            // the circular wipe runs 864ms; shoot only settled faces
+if (await stored() !== null) throw new Error("theme key set before any choice");
+await page.emulateMedia({ colorScheme: "dark" });            // system (default) follows the OS live
+await page.waitForFunction(() => document.documentElement.classList.contains("dark"), null, { timeout: 5000 })
+  .catch(() => { throw new Error("system mode did not follow OS dark"); });
+await settle();
+await page.screenshot({ path: path.join(OUT, "qa-ui.png"), fullPage: true });          // dark, results on screen
+await page.getByTestId("theme-light").click();
+await page.waitForFunction(() => !document.documentElement.classList.contains("dark"));
+if (await stored() !== "light") throw new Error(`light not persisted: ${await stored()}`);
+await settle();
+await page.screenshot({ path: path.join(OUT, "qa-ui-light.png"), fullPage: true });    // light, results on screen
+await page.reload({ waitUntil: "networkidle" });            // boot script replays the choice before paint
+if (await isDark()) throw new Error("light did not survive reload");
+await page.getByTestId("theme-dark").click();
+await page.waitForFunction(() => document.documentElement.classList.contains("dark"));
+if (await stored() !== "dark") throw new Error(`dark not persisted: ${await stored()}`);
+const pressed = await page.locator('.theme [aria-pressed="true"]').getAttribute("data-testid");
+if (pressed !== "theme-dark") throw new Error(`active segment wrong: ${pressed}`);
+await page.emulateMedia({ colorScheme: "light" });
+await page.waitForTimeout(400);                               // give a (wrong) listener time to fire
+if (!(await isDark())) throw new Error("explicit dark must ignore the OS");
+await page.getByTestId("theme-system").click();
+await page.waitForFunction(() => !document.documentElement.classList.contains("dark"));
+if (await stored() !== "system") throw new Error(`system not persisted: ${await stored()}`);
+await page.emulateMedia({ colorScheme: "dark" });
+await page.waitForFunction(() => document.documentElement.classList.contains("dark"));
 if (errors.length) throw new Error(`page errors: ${errors.join(" | ")}`);
 
-console.log(`QA PASS — ${names.length} files in zip, ${chips} chips, bg=#16324F, cmyk=${WITH_CMYK ? "on" : "off (local)"}`);
+console.log(`QA PASS — ${names.length} files in zip, ${chips} chips, bg=#16324F, cmyk=${WITH_CMYK ? "on" : "off (local)"}, themes light/dark/system OK`);
 await browser.close();

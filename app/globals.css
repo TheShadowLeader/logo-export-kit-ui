@@ -38,7 +38,7 @@
   --body: Georgia, "Times New Roman", serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* role tokens — LIGHT: moonmist base, midnight ink, bone-bright panels, dark well */
+  /* role tokens — LIGHT: moonmist base, midnight ink, bone-bright panels */
   --bg: var(--moonmist);
   --ink: var(--midnight);
   --ink-bright: var(--midnight-deep);
@@ -51,11 +51,6 @@
   --line-hi: rgba(0, 56, 64, 0.3);
   --ring: rgba(0, 56, 64, 0.55);   /* outlined controls — site: border-midnight/55 */
   --shadow: 0 10px 24px rgba(1, 25, 29, 0.1);
-  --well: var(--midnight-deep);    /* the dark card on the beige base */
-  --well-ink: var(--moonmist);
-  --well-ink-2: rgba(224, 219, 198, 0.78);
-  --well-ink-3: rgba(224, 219, 198, 0.58);
-  --well-line: rgba(224, 219, 198, 0.3);
   --island: var(--midnight-deep);
   --hb-ring: var(--midnight);      /* HoverButton outline tone: green ring, green-deep dot, bone overlay */
   --hb-dot: var(--midnight-deep);
@@ -80,11 +75,6 @@
   --line-hi: rgba(224, 219, 198, 0.3);
   --ring: var(--sunrise);          /* site: dark:border-sunrise on every outlined control */
   --shadow: 0 10px 24px rgba(1, 25, 29, 0.28);
-  --well: var(--midnight);
-  --well-ink: var(--moonmist);
-  --well-ink-2: rgba(224, 219, 198, 0.78);
-  --well-ink-3: rgba(224, 219, 198, 0.58);
-  --well-line: rgba(224, 219, 198, 0.3);
   --island: var(--midnight);
   --hb-ring: var(--sunrise);       /* outline tone in dark: sunrise ring + dot, green-deep overlay */
   --hb-dot: var(--sunrise);
@@ -122,19 +112,27 @@ input, select { caret-color: var(--sunrise); } /* browser surfaces carry the pal
 
 /* ── Header (flat bar, Vanja's call) ───────────────────────────────────────── */
 header.top { border-bottom: 1px solid var(--line); padding-block: 18px; }
-header.top .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; row-gap: 12px; }
+header.top .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: nowrap; } /* ONE row at every width — see the ≤640 rules */
 .brandlink { display: flex; align-items: center; color: var(--ink); text-decoration: none; border-radius: var(--r-field); }
 .brandlink svg { height: 36px; width: auto; display: block; }
+.brandlink .logo-mark { display: none; } /* phones swap the full lockup for the emblem so logo · name · theme share one line */
 .toolname { font-family: var(--display); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; font-size: 13px; color: var(--ink); padding-left: 18px; border-left: 1px solid var(--line); white-space: nowrap; }
 .tagline { color: var(--ink-2); font-style: italic; font-size: 15.5px; }
 .top .spacer { flex: 1; }
 .top .env { font-family: var(--display); font-weight: 500; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
 @media (max-width: 980px) { .tagline { display: none; } }
-@media (max-width: 640px) { .top .env { display: none; } }
+@media (max-width: 640px) {
+  .top .env { display: none; }
+  .brandlink .logo-full { display: none; }
+  .brandlink .logo-mark { display: block; }
+  header.top .wrap { gap: 14px; }
+  .toolname { font-size: 12px; letter-spacing: 0.1em; padding-left: 12px; }
+  .wrap { padding-inline: 20px; }
+}
 
 /* Theme switch — light · dark · system (components/ThemeSwitch.tsx): the site's outline
    control — 2px ring (midnight/55 light, sunrise dark), active segment filled sunrise. */
-.theme { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 2px solid var(--ring); border-radius: var(--pill); transition: border-color 0.2s ease; margin-left: auto; }
+.theme { display: inline-flex; flex: none; align-items: center; gap: 2px; padding: 2px; border: 2px solid var(--ring); border-radius: var(--pill); transition: border-color 0.2s ease; margin-left: auto; }
 .theme button { display: grid; place-items: center; width: 30px; height: 24px; border: 0; border-radius: var(--pill); background: transparent; color: var(--ink); transition: background 0.2s ease, color 0.2s ease, transform 160ms var(--ease); }
 .theme button:active { transform: scale(0.94); }
 .theme button[aria-pressed="true"] { background: var(--sunrise); color: var(--midnight); }
@@ -156,18 +154,18 @@ main > section:first-child { border-top: 0; padding-top: 4px; }
 section > h2 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 2.7vw, 38px); letter-spacing: -0.03em; line-height: 1.05; margin-top: 14px; color: var(--ink-bright); }
 section > h2 + * { margin-top: 28px; } /* more air above a heading (56px section gap) than below it */
 
-/* ── Drop zone — the dark card on the beige base (the site's case/praise cards) ── */
+/* ── Drop zone — the same card as the options panel; the dashed edge says "drop here" ── */
 .drop {
   display: grid; justify-items: center; gap: 8px;
-  background: var(--well); color: var(--well-ink-2); border: 1px dashed var(--well-line); border-radius: var(--r-card); box-shadow: var(--shadow);
+  background: var(--surface); color: var(--ink-2); border: 1px dashed var(--line-hi); border-radius: var(--r-card); box-shadow: var(--shadow);
   padding: 66px 28px 62px; text-align: center; cursor: pointer;
   transition: border-color 0.25s ease, background 0.25s ease;
 }
-.drop svg { width: 22px; height: 22px; margin-bottom: 8px; color: var(--well-ink-3); transition: color 0.2s ease, transform 0.3s var(--ease); }
-.drop b { font-family: var(--display); font-weight: 500; font-size: 21px; letter-spacing: 0.01em; color: var(--well-ink); }
+.drop svg { width: 22px; height: 22px; margin-bottom: 8px; color: var(--ink-3); transition: color 0.2s ease, transform 0.3s var(--ease); }
+.drop b { font-family: var(--display); font-weight: 500; font-size: 21px; letter-spacing: 0.01em; color: var(--ink-bright); }
 .drop .hint { max-width: 62ch; font-size: 16px; line-height: 1.55; }
-.drop .hint code { display: block; margin-top: 8px; font-family: var(--mono); font-size: 12px; color: var(--well-ink-3); }
-.drop.on { border-color: var(--sunrise); background: color-mix(in srgb, var(--well), var(--sunrise) 12%); }
+.drop .hint code { display: block; margin-top: 8px; font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+.drop.on { border-color: var(--sunrise); background: color-mix(in srgb, var(--surface), var(--sunrise) 10%); }
 .drop.on svg { color: var(--sunrise); transform: translateY(-2px); }
 @media (hover: hover) and (pointer: fine) {
   .drop:hover { border-color: var(--sunrise); }

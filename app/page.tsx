@@ -118,7 +118,8 @@ export default function Page() {
       <header className="top">
         <div className="wrap">
           <a className="brandlink" href="https://theshadowlegacy.com" target="_blank" rel="noopener noreferrer" aria-label="The Shadow Legacy">
-            <Logo />
+            <Logo className="logo-full" />
+            <Logo variant="mark" className="logo-mark" />
           </a>
           <span className="toolname">Logo Export Kit</span>
           <span className="tagline">Drop the masters. Leave with the whole package.</span>

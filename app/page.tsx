@@ -13,6 +13,7 @@ import {
   type Av, type Detected, type Job, type Orientation,
 } from "@/lib/engine";
 import { makeZip, produceAll, type Produced } from "@/lib/render";
+import Logo from "@/components/Logo";
 
 type Row = Detected & { id: number };
 
@@ -113,12 +114,13 @@ export default function Page() {
     <>
       <header className="top">
         <div className="wrap">
-          <span className="wordmark">
-            Logo Export Kit<span className="dot">.</span>
-          </span>
-          <span className="tagline">drop the SVGs, take the whole package</span>
+          <a className="brandlink" href="https://theshadowlegacy.com" target="_blank" rel="noopener noreferrer" aria-label="The Shadow Legacy">
+            <Logo />
+          </a>
+          <span className="toolname">Logo Export Kit</span>
+          <span className="tagline">Drop the masters. Leave with the whole package.</span>
           <span className="spacer" />
-          <span className="env">THE SHADOW LEGACY · INTERNAL</span>
+          <span className="env">Internal · The Shadow Legacy</span>
         </div>
       </header>
 
@@ -126,7 +128,7 @@ export default function Page() {
         {/* ── 1 · Upload ── */}
         <section>
           <p className="eyebrow">01 · Logos</p>
-          <h2>Drop the SVG masters</h2>
+          <h2>The masters</h2>
           <div style={{ height: 14 }} />
           <div
             className={`drop${dragOn ? " on" : ""}`}
@@ -136,7 +138,7 @@ export default function Page() {
             onDrop={(e) => { e.preventDefault(); setDragOn(false); void addFiles(e.dataTransfer.files); }}
             data-testid="dropzone"
           >
-            <b>Drop 1–7 SVGs here</b>
+            <b>Drop 1–7 SVG masters here</b>
             <p className="hint">
               {"or click to browse — orientation + negative auto-detected from filenames: "}
               <code>mark.svg · horizontal-positive.svg · stacked-negative.svg · type.svg</code>
@@ -185,13 +187,13 @@ export default function Page() {
         {/* ── 2 · Options ── */}
         <section>
           <p className="eyebrow">02 · Options</p>
-          <h2>Client, colors, margins</h2>
+          <h2>Client, colours, margins</h2>
           <div style={{ height: 14 }} />
           <div className="options">
             <div className="opt">
               <label>Client name</label>
               <input
-                type="text" placeholder="Halyard Marine" value={client}
+                type="text" placeholder="Client name — drives every folder and filename" value={client}
                 onChange={(e) => setClient(e.target.value)} data-testid="client-name"
               />
             </div>
@@ -254,7 +256,7 @@ export default function Page() {
         <section>
           <div className="genrow">
             <button className="btn" disabled={!canGenerate} onClick={() => void generate()} data-testid="generate">
-              {busy ? "Rendering…" : "Generate package"}
+              {busy ? "Rendering…" : "Generate the package"}
             </button>
             {zipUrl && (
               <a className="btn ghost" href={zipUrl} download={`${rootName}.zip`} data-testid="download-zip">
@@ -293,9 +295,13 @@ export default function Page() {
 
       <footer className="foot">
         <div className="wrap">
-          <span>One engine, two front-ends — CLI skill + this UI share the same conventions.</span>
+          <span>
+            {"© "}{new Date().getFullYear()}{" "}
+            <a href="https://theshadowlegacy.com" target="_blank" rel="noopener noreferrer">The Shadow Legacy</a>
+            {" — one engine, two front-ends. The CLI skill and this tool share every convention."}
+          </span>
           <span className="spacer" />
-          <code>hosted CMYK is profile-less; CLI applies ICC locally</code>
+          <code>hosted CMYK is profile-less · the CLI applies ICC locally</code>
         </div>
       </footer>
     </>

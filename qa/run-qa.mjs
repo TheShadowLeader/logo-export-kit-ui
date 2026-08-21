@@ -21,13 +21,18 @@ const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
 
 await page.goto(BASE, { waitUntil: "networkidle", timeout: 60000 });
+// wait for React hydration: the file input's onChange only exists once hydrated
+await page.waitForFunction(() => {
+  const el = document.querySelector('input[type="file"]');
+  return el && Object.keys(el).some((k) => k.startsWith("__reactProps"));
+}, { timeout: 30000 });
 
 // upload fixtures via the hidden input
 await page.setInputFiles('input[type="file"]', [
   { name: "mark.svg", mimeType: "image/svg+xml", buffer: Buffer.from(MARK) },
   { name: "horizontal-positive.svg", mimeType: "image/svg+xml", buffer: Buffer.from(HORIZ) },
 ]);
-await page.waitForTimeout(400);
+await page.locator(".chip").first().waitFor({ timeout: 10000 });
 
 // chips detected
 const chips = await page.locator(".chip").count();

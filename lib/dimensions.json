@@ -1,0 +1,54 @@
+{
+  "_meta": {
+    "last_verified": "2026-04-08",
+    "note": "Verify profile pic dimensions before each run via quick web search"
+  },
+  "social": {
+    "Instagram": {
+      "profile": { "size": [320, 320], "notes": "Displayed as circle" }
+    },
+    "Facebook": {
+      "profile": { "size": [320, 320], "notes": "Displayed as circle" }
+    },
+    "TikTok": {
+      "profile": { "size": [400, 400], "notes": "Displayed as circle, min 200x200" }
+    },
+    "X": {
+      "profile": { "size": [400, 400], "notes": "Displayed as circle" }
+    },
+    "YouTube": {
+      "profile": { "size": [800, 800], "notes": "Displayed as circle" }
+    },
+    "LinkedIn": {
+      "profile": { "size": [400, 400], "notes": "Circle on personal, square on company" }
+    }
+  },
+  "favicon": {
+    "ico_sizes": [16, 32, 48],
+    "png_sizes": {
+      "favicon-16x16.png": [16, 16],
+      "favicon-32x32.png": [32, 32],
+      "apple-touch-icon.png": [180, 180],
+      "android-chrome-192x192.png": [192, 192],
+      "android-chrome-512x512.png": [512, 512]
+    },
+    "include_svg": true,
+    "logo_orientation": "mark"
+  },
+  "web": {
+    "widths": [200, 400, 800, 1200],
+    "include_svg": true
+  },
+  "print": {
+    "min_dpi": 300,
+    "png_width": 4000,
+    "include_svg": true,
+    "include_jpg": true,
+    "jpg_quality": 95,
+    "exclude_white_from_print": true
+  },
+  "safe_zone": {
+    "profile_logo_scale": 0.79,
+    "notes": "Logo occupies ~79% of canvas, ~10.6% padding each side"
+  }
+}

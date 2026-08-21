@@ -1,0 +1,5 @@
+node_modules/
+.next/
+.vercel/
+qa/out/
+*.log
